@@ -8,12 +8,13 @@ mod errors;
 
 pub fn start_run() -> Result<(), MyShellError> {
     // TODO: Uncomment the code below to pass the first stage
-    print!("$ ");
-    io::stdout().flush().unwrap();
+    loop {
+        print!("$ ");
+        io::stdout().flush().unwrap();
 
-    let mut command = String::new();
-    io::stdin().read_line(&mut command)?;
-    println!("{}: command not found", command.trim());
-
+        let mut command = String::new();
+        io::stdin().read_line(&mut command)?;
+        println!("{}: command not found", command.trim());
+    }
     Ok(())
 }
