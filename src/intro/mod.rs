@@ -1,2 +1,2 @@
 pub mod check_type;
-mod read_type_path;
+pub mod check_executable;
