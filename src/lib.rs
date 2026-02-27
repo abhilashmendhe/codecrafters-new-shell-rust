@@ -18,6 +18,9 @@ pub fn start_run() -> Result<(), MyShellError> {
         let u_command = command.trim();
         if u_command.eq("exit") {
             break;
+        } else if u_command.starts_with("echo") {
+            let res_string = &u_command[5..];
+            println!("{}", res_string);
         } else {
             println!("{}: command not found", u_command);
         }
