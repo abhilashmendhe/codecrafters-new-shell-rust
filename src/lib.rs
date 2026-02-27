@@ -15,18 +15,22 @@ pub fn start_run() -> Result<(), MyShellError> {
         let mut command = String::new();
         io::stdin().read_line(&mut command)?;
 
-        let u_command = command.trim();
-        if u_command.eq("exit") {
+        let trim_cmd = command.trim();
+        if trim_cmd.eq("exit") {
             break;
-        } else if u_command.starts_with("echo") {
-            let ech_res_str = &u_command[5..];
+        } else if trim_cmd.starts_with("echo") {
+            let ech_res_str = &trim_cmd[5..];
             println!("{}", ech_res_str);
-        } else if u_command.starts_with("type") {
-            let typ_res_str = &u_command[5..];
-            let res_str = check_type(typ_res_str);
+        } else if trim_cmd.starts_with("type") {
+
+            if trim_cmd.len() == 4 {
+                continue;
+            }
+            let typ_res_str = &trim_cmd[5..];
+            let res_str = check_type(typ_res_str)?;
             println!("{}", res_str);
         } else {
-            println!("{}: command not found", u_command);
+            println!("{}: command not found", trim_cmd);
         }
     }
     Ok(())
