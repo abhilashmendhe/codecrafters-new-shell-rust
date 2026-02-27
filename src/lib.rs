@@ -30,6 +30,9 @@ pub fn start_run() -> Result<(), MyShellError> {
             let typ_res_str = &trim_cmd[5..];
             let res_str = check_type(typ_res_str)?;
             println!("{}", res_str);
+        } else if trim_cmd.eq("pwd") {
+            let pwd = std::env::current_dir()?;
+            println!("{}", pwd.display());
         } else {
             let spl_cmds = trim_cmd.split(" ").collect::<Vec<&str>>();
         
