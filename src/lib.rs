@@ -2,10 +2,11 @@
 use std::io::{self, Write};
 use std::process::Command;
 
-use crate::{errors::MyShellError, intro::{check_executable::check_executable, check_type::check_type}};
+use crate::{errors::MyShellError, intro::{check_executable::check_executable, check_type::check_type}, navigation::go_to_path::go_to_path};
 
 mod intro;
 mod errors;
+mod navigation; 
 
 pub fn start_run() -> Result<(), MyShellError> {
 
@@ -20,6 +21,7 @@ pub fn start_run() -> Result<(), MyShellError> {
         if trim_cmd.eq("exit") {
             break;
         } else if trim_cmd.starts_with("echo") {
+
             let ech_res_str = &trim_cmd[5..];
             println!("{}", ech_res_str);
         } else if trim_cmd.starts_with("type") {
@@ -31,8 +33,15 @@ pub fn start_run() -> Result<(), MyShellError> {
             let res_str = check_type(typ_res_str)?;
             println!("{}", res_str);
         } else if trim_cmd.eq("pwd") {
+
             let pwd = std::env::current_dir()?;
             println!("{}", pwd.display());
+        } else if trim_cmd.starts_with("cd") {
+            
+            let res_str = go_to_path(&trim_cmd[2..])?;
+            if res_str.len() > 0 {
+                println!("{}", res_str);
+            }
         } else {
             let spl_cmds = trim_cmd.split(" ").collect::<Vec<&str>>();
         
