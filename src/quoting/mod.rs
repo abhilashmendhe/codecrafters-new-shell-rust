@@ -1,8 +1,9 @@
-use crate::{CMD, errors::MyShellError, quoting::{cat_file::cat_file, only_word::only_word, single_quote::single_quote}};
+use crate::{CMD, errors::MyShellError, quoting::{cat_file::cat_file, double_quote::double_quote, only_word::only_word, single_quote::single_quote}};
 
 pub mod single_quote;
 pub mod only_word;
 pub mod cat_file;
+pub mod double_quote;
 
 enum WHATCHAR { 
     SPACE, 
@@ -39,6 +40,20 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
 
         } else if stm_chars[ind] == '\"' {
 
+            let i = ind;
+            let ou_str = double_quote(&mut ind, &stm_chars[i+1..]);
+            match cmd {
+                CMD::ECHO => {
+                    output.push_str(&ou_str);   
+                    
+                },
+                CMD::CAT => {
+                    // println!("{}", ou_str);
+                    let cfile_out = cat_file(ou_str)?;
+                    output.push_str(&cfile_out);
+                },
+            }
+            whar = WHATCHAR::SPACE;
         } else if stm_chars[ind] == ' ' {
             ind += 1;
             match whar {
