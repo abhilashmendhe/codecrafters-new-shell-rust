@@ -1,0 +1,85 @@
+use crate::{CMD, errors::MyShellError, quoting::{cat_file::cat_file, only_word::only_word, single_quote::single_quote}};
+
+pub mod single_quote;
+pub mod only_word;
+pub mod cat_file;
+
+enum WHATCHAR { 
+    SPACE, 
+    NONE
+}
+
+pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
+    // println!("{}", stm);
+
+    let mut whar = WHATCHAR::NONE;
+    let mut output = String::new();
+
+    let stm_chars = stm.chars().collect::<Vec<_>>();
+
+    let mut ind = 0;
+
+    while ind < stm_chars.len() {
+
+        if stm_chars[ind] == '\'' {
+            let i = ind;
+            let ou_str = single_quote(&mut ind, &stm_chars[i+1..]);
+            match cmd {
+                CMD::ECHO => {
+                    output.push_str(&ou_str);   
+                    
+                },
+                CMD::CAT => {
+                    // println!("{}", ou_str);
+                    let cfile_out = cat_file(ou_str)?;
+                    output.push_str(&cfile_out);
+                },
+            }
+            whar = WHATCHAR::SPACE;
+
+        } else if stm_chars[ind] == '\"' {
+
+        } else if stm_chars[ind] == ' ' {
+            ind += 1;
+            match whar {
+                WHATCHAR::SPACE => {
+                    match cmd {
+                        CMD::ECHO => {
+                            output.push(' ');       
+                        },
+                        CMD::CAT => {
+                            // println!("{:?}", f_paths);
+                        },
+                    }
+                    whar = WHATCHAR::NONE;
+                },
+                WHATCHAR::NONE => {},
+            }
+            
+            continue;
+        } else {
+
+            let i = ind;
+            let ou_str = only_word(&mut ind, &stm_chars[i..]);
+            
+            match cmd {
+                CMD::ECHO => {
+                    output.push_str(&ou_str);   
+                },
+                CMD::CAT => {
+                    // println!("{}", ou_str);
+                    let cfile_out = cat_file(ou_str)?;
+                    output.push_str(&cfile_out);
+                },
+            }
+            // println!("{} -> {:?}", ind, &stm_chars[ind..]);
+            whar = WHATCHAR::SPACE;
+            continue;
+        }
+        ind += 1;
+    }
+    // println!("{}", 'a' > 'b');
+    // println!("{:?}", stm_chars);
+    // println!("{}", output);
+    Ok(output)
+}
