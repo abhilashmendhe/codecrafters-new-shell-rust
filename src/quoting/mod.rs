@@ -77,6 +77,9 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
             // let i = ind;
             // let ou_str = only_word(&mut ind, &stm_chars[i..])?;
             let ou_str = only_word(&mut ind, &stm_chars)?;
+            // println!("{} -> {:?}", ind, &stm_chars[ind..]);
+            // println!("{:?}", &stm_chars);
+            // println!("In quoting/mod.rs - {:?}", ou_str);
             match cmd {
                 CMD::ECHO => {
                     output.push_str(&ou_str);   
@@ -88,8 +91,6 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
                     output.push_str(&cfile_out);
                 },
             }
-            // println!("{} -> {:?}", ind, &stm_chars[ind..]);
-            // println!("In quoting/mod.rs - {:?}", ou_str);
             
             whar = WHATCHAR::SPACE;
             continue;
