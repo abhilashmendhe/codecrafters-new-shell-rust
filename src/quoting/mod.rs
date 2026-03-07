@@ -22,6 +22,7 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
 
     while ind < stm_chars.len() {
 
+        // std::thread::sleep(std::time::Duration::from_millis(500));
         if stm_chars[ind] == '\'' {
             let i = ind;
             let ou_str = single_quote(&mut ind, &stm_chars[i+1..]);
@@ -31,7 +32,6 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
                     
                 },
                 CMD::CAT => {
-                    // println!("{}", ou_str);
                     let cfile_out = cat_file(ou_str)?;
                     output.push_str(&cfile_out);
                 },
@@ -74,20 +74,23 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
             continue;
         } else {
 
-            let i = ind;
-            let ou_str = only_word(&mut ind, &stm_chars[i..]);
-            
+            // let i = ind;
+            // let ou_str = only_word(&mut ind, &stm_chars[i..])?;
+            let ou_str = only_word(&mut ind, &stm_chars)?;
             match cmd {
                 CMD::ECHO => {
                     output.push_str(&ou_str);   
                 },
                 CMD::CAT => {
-                    // println!("{}", ou_str);
-                    let cfile_out = cat_file(ou_str)?;
+                    let cat_out = ou_str.clone();
+                    // println!("{}", &cat_out);
+                    let cfile_out = cat_file(cat_out)?;
                     output.push_str(&cfile_out);
                 },
             }
             // println!("{} -> {:?}", ind, &stm_chars[ind..]);
+            // println!("In quoting/mod.rs - {:?}", ou_str);
+            
             whar = WHATCHAR::SPACE;
             continue;
         }

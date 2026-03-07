@@ -4,8 +4,8 @@ use std::process::Command;
 
 use crate::{errors::MyShellError, intro::{check_executable::check_executable, check_type::check_type}, navigation::go_to_path::go_to_path, quoting::ech_extract};
 
+pub mod errors;
 mod intro;
-mod errors;
 mod navigation; 
 mod quoting;
 
@@ -34,8 +34,10 @@ pub fn start_run() -> Result<(), MyShellError> {
         } else if trim_cmd.starts_with("cat") {
 
             let stmt = trim_cmd[3..].trim_ascii_start();
+            // let ret_files = ech_extract(stmt, CMD::ECHO)?;
             let res_str = ech_extract(stmt, CMD::CAT)?;
             println!("{}", res_str);
+            // println!("{}",ret_files);
         } else if trim_cmd.starts_with("type") {
 
             if trim_cmd.len() == 4 {
@@ -54,7 +56,6 @@ pub fn start_run() -> Result<(), MyShellError> {
             if res_str.len() > 0 {
                 println!("{}", res_str);
             }
-
         } else {
             let spl_cmds = trim_cmd.split(" ").collect::<Vec<&str>>();
         
