@@ -1,4 +1,4 @@
-use crate::{errors::MyShellError, quoting::single_quote::single_quote};
+use crate::{errors::MyShellError, quoting::{double_quote::double_quote, single_quote::single_quote}};
 
 pub fn only_word(ind: &mut usize, stm_chars: &[char]) -> Result<String, MyShellError> {
     let mut s = "".to_string();
@@ -12,8 +12,13 @@ pub fn only_word(ind: &mut usize, stm_chars: &[char]) -> Result<String, MyShellE
         if ch == '\'' || ch == '\"' || ch == ' ' {
             
             let out_single_qu =  if ch == '\'' {
-                // *ind += 2;
+                
                 let sing_out = single_quote(ind, &stm_chars[*ind+1..]);
+                *ind += 1;
+                sing_out
+            } else if ch == '\"' {
+
+                let sing_out = double_quote(ind, &stm_chars)?;
                 *ind += 1;
                 sing_out
             } else {
@@ -24,7 +29,7 @@ pub fn only_word(ind: &mut usize, stm_chars: &[char]) -> Result<String, MyShellE
         } else if ch == '\\' {
 
             if *ind + 1 >= stm_chars.len() {
-                return Err(MyShellError::NothingAfterSlash(String::from("Nothing after slash. Exiting!")));
+                return Err(MyShellError::IncompleteEcho(String::from("Nothing after slash (\\). Exiting!")));
             } else {
 
                 s.push(stm_chars[*ind+1]);

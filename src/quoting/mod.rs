@@ -5,6 +5,7 @@ pub mod only_word;
 pub mod cat_file;
 pub mod double_quote;
 
+#[derive(Debug)]
 enum WHATCHAR { 
     SPACE, 
     NONE
@@ -39,23 +40,24 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
             whar = WHATCHAR::SPACE;
 
         } else if stm_chars[ind] == '\"' {
+            
+            let ou_str = double_quote(&mut ind, &stm_chars)?;
 
-            let i = ind;
-            let ou_str = double_quote(&mut ind, &stm_chars[i+1..]);
             match cmd {
                 CMD::ECHO => {
                     output.push_str(&ou_str);   
                     
                 },
                 CMD::CAT => {
-                    // println!("{}", ou_str);
                     let cfile_out = cat_file(ou_str)?;
                     output.push_str(&cfile_out);
                 },
             }
             whar = WHATCHAR::SPACE;
+           
         } else if stm_chars[ind] == ' ' {
             ind += 1;
+            // println!("In ' ' cond");
             match whar {
                 WHATCHAR::SPACE => {
                     match cmd {
@@ -63,7 +65,7 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
                             output.push(' ');       
                         },
                         CMD::CAT => {
-                            // println!("{:?}", f_paths);
+
                         },
                     }
                     whar = WHATCHAR::NONE;
@@ -74,19 +76,13 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
             continue;
         } else {
 
-            // let i = ind;
-            // let ou_str = only_word(&mut ind, &stm_chars[i..])?;
             let ou_str = only_word(&mut ind, &stm_chars)?;
-            // println!("{} -> {:?}", ind, &stm_chars[ind..]);
-            // println!("{:?}", &stm_chars);
-            // println!("In quoting/mod.rs - {:?}", ou_str);
             match cmd {
                 CMD::ECHO => {
                     output.push_str(&ou_str);   
                 },
                 CMD::CAT => {
                     let cat_out = ou_str.clone();
-                    // println!("{}", &cat_out);
                     let cfile_out = cat_file(cat_out)?;
                     output.push_str(&cfile_out);
                 },
@@ -97,8 +93,6 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
         }
         ind += 1;
     }
-    // println!("{}", 'a' > 'b');
-    // println!("{:?}", stm_chars);
-    // println!("{}", output);
+
     Ok(output)
 }

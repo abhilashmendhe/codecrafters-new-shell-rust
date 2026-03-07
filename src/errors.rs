@@ -9,6 +9,6 @@ pub enum MyShellError {
     #[error("Var error: {0}")]
     Var(#[from] std::env::VarError),
 
-    #[error("Nothing after slash (\\): {0}")]
-    NothingAfterSlash(String),
+    #[error("{0}")]
+    IncompleteEcho(String),
 }
