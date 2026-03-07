@@ -28,9 +28,9 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
             let i = ind;
             let ou_str = single_quote(&mut ind, &stm_chars[i+1..]);
             match cmd {
-                CMD::ECHO => {
+                CMD::ECHO | CMD::EXEC=> {
                     output.push_str(&ou_str);   
-                    
+    
                 },
                 CMD::CAT => {
                     let cfile_out = cat_file(ou_str)?;
@@ -44,7 +44,7 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
             let ou_str = double_quote(&mut ind, &stm_chars)?;
 
             match cmd {
-                CMD::ECHO => {
+                CMD::ECHO | CMD::EXEC => {
                     output.push_str(&ou_str);   
                     
                 },
@@ -52,6 +52,7 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
                     let cfile_out = cat_file(ou_str)?;
                     output.push_str(&cfile_out);
                 },
+                
             }
             whar = WHATCHAR::SPACE;
            
@@ -67,6 +68,9 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
                         CMD::CAT => {
 
                         },
+                        CMD::EXEC => {
+                            output.push('|');
+                        }
                     }
                     whar = WHATCHAR::NONE;
                 },
@@ -78,7 +82,7 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
 
             let ou_str = only_word(&mut ind, &stm_chars)?;
             match cmd {
-                CMD::ECHO => {
+                CMD::ECHO | CMD::EXEC => {
                     output.push_str(&ou_str);   
                 },
                 CMD::CAT => {

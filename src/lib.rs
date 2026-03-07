@@ -11,7 +11,8 @@ mod quoting;
 
 pub enum CMD {
     ECHO,
-    CAT
+    CAT,
+    EXEC
 }
 
 pub fn start_run() -> Result<(), MyShellError> {
@@ -57,8 +58,13 @@ pub fn start_run() -> Result<(), MyShellError> {
                 println!("{}", res_str);
             }
         } else {
-            let spl_cmds = trim_cmd.split(" ").collect::<Vec<&str>>();
-        
+            // println!("trim_cmd: {}", trim_cmd);
+            let output = ech_extract(trim_cmd, CMD::EXEC)?;
+            // println!("{}", output);
+            let spl_cmds = output.split("|").collect::<Vec<&str>>();
+            
+            // println!("START src/lib.rs 'else' condition");
+            // println!("{}", spl_cmds[0]);
             let shell_f_type = check_executable(spl_cmds[0])?;
             if shell_f_type.is_exe {
                 let script_out = Command::new(&spl_cmds[0])
@@ -68,6 +74,7 @@ pub fn start_run() -> Result<(), MyShellError> {
             } else {
                 println!("{}: command not found", &spl_cmds[0]);
             }
+            // println!("START src/lib.rs 'else' END");
         }
     }
     Ok(())
