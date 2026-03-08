@@ -4,6 +4,7 @@ pub mod single_quote;
 pub mod only_word;
 pub mod cat_file;
 pub mod double_quote;
+pub mod file_exists;
 
 #[derive(Debug)]
 enum WHATCHAR { 
@@ -11,7 +12,7 @@ enum WHATCHAR {
     NONE
 }
 
-pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
+pub fn parse_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
     // println!("{}", stm);
 
     let mut whar = WHATCHAR::NONE;
@@ -36,6 +37,7 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
                     let cfile_out = cat_file(ou_str)?;
                     output.push_str(&cfile_out);
                 },
+                CMD::LS => {}
             }
             whar = WHATCHAR::SPACE;
 
@@ -52,7 +54,7 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
                     let cfile_out = cat_file(ou_str)?;
                     output.push_str(&cfile_out);
                 },
-                
+                CMD::LS => {}
             }
             whar = WHATCHAR::SPACE;
            
@@ -70,7 +72,8 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
                         },
                         CMD::EXEC => {
                             output.push('|');
-                        }
+                        },
+                        CMD::LS => {}
                     }
                     whar = WHATCHAR::NONE;
                 },
@@ -87,9 +90,18 @@ pub fn ech_extract(stm: &str, cmd: CMD) -> Result<String, MyShellError> {
                 },
                 CMD::CAT => {
                     let cat_out = ou_str.clone();
-                    let cfile_out = cat_file(cat_out)?;
-                    output.push_str(&cfile_out);
+                    let cfile_out_res = cat_file(cat_out)?;
+                    output.push_str(&cfile_out_res);
+                    // match cfile_out_res {
+                    //     Ok(cfile_out) => output.push_str(&cfile_out),
+                    //     Err(err) => {
+                    //         println!("{:?}",err);
+                    //         println!("{:?}",stm_chars);
+                    //     },
+                    // }
+
                 },
+                CMD::LS => {}
             }
             
             whar = WHATCHAR::SPACE;
